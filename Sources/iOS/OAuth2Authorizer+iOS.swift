@@ -168,6 +168,8 @@ open class OAuth2Authorizer: OAuth2AuthorizerUI {
 
 #if targetEnvironment(macCatalyst)
 		authenticationSession = ASWebAuthenticationSession(url: url, callbackURLScheme: redirectURL.scheme, completionHandler: completionHandler)
+        webAuthenticationPresentationContextProvider = OAuth2ASWebAuthenticationPresentationContextProvider(authorizer: self)
+        (authenticationSession as! ASWebAuthenticationSession).presentationContextProvider = webAuthenticationPresentationContextProvider as! OAuth2ASWebAuthenticationPresentationContextProvider
 		return (authenticationSession as! ASWebAuthenticationSession).start()
 #else
 		if #available(iOS 12, *) {
@@ -315,6 +317,7 @@ class OAuth2SFViewControllerDelegate: NSObject, SFSafariViewControllerDelegate {
 }
 
 @available(iOS 13.0, *)
+@available(macCatalyst 13.0, *)
 class OAuth2ASWebAuthenticationPresentationContextProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
 
 	private let authorizer: OAuth2Authorizer
